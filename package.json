@@ -1,0 +1,19 @@
+{
+  "name": "mytopsongs",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "start":"vite serve --host",
+    "build":"vite build",
+    "preview":"vite preview"
+  },
+  "browserslist": "> 0.5%, last 1 versions, not dead",
+  "author": "leon332157",
+  "license": "MIT",
+  "dependencies": {
+    "@spotify/web-api-ts-sdk": "^1.2.0"
+  },
+  "devDependencies": {
+    "vite": "^5.2.12"
+  }
+}
