@@ -47,6 +47,7 @@ if (windowURL.pathname === "/callback") {
 
 document.addEventListener('DOMContentLoaded', async () => {
     let topSongs = await spotify.currentUser.topItems("tracks", "short_term", limit) // default to short term
+    try {
     switch (windowURL.pathname) {
         case "/callback":
             window.location.href = window.location.origin;
@@ -56,6 +57,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateSongListUI(topSongs.items, `My Top ${limit} Songs - Short Term`);
             break;
         case "/medium":
+                topSongs = await spotify.currentUser.topItems("tracks", "medium_term", limit)
+                updateSongListUI(topSongs.items, `My Top ${limit} Songs - Medium Term`);
             topSongs = await spotify.currentUser.topItems("tracks", "medium_term", limit)
             plBtn!.onclick = () => createPlaylist(topSongs.items, `My Top ${limit} Songs - Medium Term`);
             updateSongListUI(topSongs.items, `My Top ${limit} Songs - Medium Term`);
@@ -67,6 +70,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             break;
         default:
             console.log('default', windowURL.pathname);
+    } } catch (e) {
+        console.error(e);
+        updateSongListUI([], `Error Occurred: ${e}, try refreshing the page`);
+        return;
     }
     plBtn!.onclick = () => createPlaylist(topSongs.items, `My Top ${limit} Songs - Short Term`);
 });
