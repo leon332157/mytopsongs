@@ -19,7 +19,7 @@ spotify.currentUser.profile().then((profile) => {
     document.getElementById("displayName")!.innerText = `logged in as ${profile.display_name}`;
 })
 
-function updateSongListUI(songs: Track[],name:string) {
+function updateSongListUI(songs: Track[], name: string) {
     songsList!.innerHTML = `<p>${name}</p>`;
     songs.forEach((song) => {
         const allArtists = song.artists.reduce((acc, artist, idx) => { return (idx > 0 ? acc += `, ${artist.name}` : artist.name) }, '');
@@ -41,28 +41,35 @@ if (limitp !== null) {
     else limit = Number.parseInt(limitp) as MaxInt<50>;
 }
 
-let topSongs = await spotify.currentUser.topItems("tracks", "short_term", limit) // default to short term
-plBtn!.onclick = () => createPlaylist(topSongs.items, `My Top ${limit} Songs - Short Term`);
-switch (windowURL.pathname) {
-    case "/callback":
-        window.location.href = window.location.origin;
-    case "/":
-    case "/short":
-        updateSongListUI(topSongs.items,`My Top ${limit} Songs - Short Term`);
-        break;
-    case "/medium":
-        topSongs = await spotify.currentUser.topItems("tracks", "medium_term", limit)
-        plBtn!.onclick = () => createPlaylist(topSongs.items, `My Top ${limit} Songs - Medium Term`);
-        updateSongListUI(topSongs.items,`My Top ${limit} Songs - Medium Term`);
-        break;
-    case "/long":
-        topSongs = await spotify.currentUser.topItems("tracks", "long_term", limit)
-        plBtn!.onclick = () => createPlaylist(topSongs.items, `My Top ${limit} Songs - Long Term`);
-        updateSongListUI(topSongs.items,`My Top ${limit} Songs - Long Term`);
-        break;
-    default:
-        console.log('default', windowURL.pathname);
+if (windowURL.pathname === "/callback") {
+    window.location.href = window.location.origin;
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    let topSongs = await spotify.currentUser.topItems("tracks", "short_term", limit) // default to short term
+    switch (windowURL.pathname) {
+        case "/callback":
+            window.location.href = window.location.origin;
+            break;
+        case "/":
+        case "/short":
+            updateSongListUI(topSongs.items, `My Top ${limit} Songs - Short Term`);
+            break;
+        case "/medium":
+            topSongs = await spotify.currentUser.topItems("tracks", "medium_term", limit)
+            plBtn!.onclick = () => createPlaylist(topSongs.items, `My Top ${limit} Songs - Medium Term`);
+            updateSongListUI(topSongs.items, `My Top ${limit} Songs - Medium Term`);
+            break;
+        case "/long":
+            topSongs = await spotify.currentUser.topItems("tracks", "long_term", limit)
+            plBtn!.onclick = () => createPlaylist(topSongs.items, `My Top ${limit} Songs - Long Term`);
+            updateSongListUI(topSongs.items, `My Top ${limit} Songs - Long Term`);
+            break;
+        default:
+            console.log('default', windowURL.pathname);
+    }
+    plBtn!.onclick = () => createPlaylist(topSongs.items, `My Top ${limit} Songs - Short Term`);
+});
 
 
 async function getAllUserPlaylists() {
